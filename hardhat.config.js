@@ -3,6 +3,7 @@ require("@nomiclabs/hardhat-etherscan")
 require("dotenv").config()
 require("hardhat-gas-reporter")
 require("solidity-coverage")
+require("hardhat-deploy")
 
 /** @type import('hardhat/config').HardhatUserConfig */
 
@@ -14,6 +15,7 @@ const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || "key"
 module.exports = {
   defaultNetwork: "hardhat",
   networks: {
+    defaultNetwork: 'hardhat',
     goerli: {
       url: GOERLI_RPC_URL,
       accounts: [PRIVATE_KEY],
@@ -36,4 +38,12 @@ module.exports = {
     coinmarketcap: COINMARKETCAP_API_KEY,
     token: "MATIC",
   },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    },
+    user: {
+      default: 5
+    }
+  }
 }
