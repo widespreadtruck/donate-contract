@@ -4,11 +4,18 @@ pragma solidity 0.8.17;
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "./PriceConverter.sol";
 
-error NotOwner();
+error FundMe__NotOwner();
+
+/**@title A sample Funding Contract
+ * @notice This contract is for creating a sample funding contract
+ * @dev This implements price feeds as a library
+ */
 
 contract FundMe {
+  // type declarations
   using PriceConverter for uint256;
 
+  // state variables
   mapping(address => uint256) public addressToAmountFunded;
   address[] public funders;
 
@@ -17,11 +24,25 @@ contract FundMe {
 
   AggregatorV3Interface public priceFeed;
 
+  modifier onlyOwner() {
+    if (msg.sender != i_owner) revert FundMe__NotOwner();
+    _;
+  }
+
   constructor(address priceFeedAddress) {
     i_owner = msg.sender;
     priceFeed = AggregatorV3Interface(priceFeedAddress);
   }
 
+  receive() external payable {
+    fund();
+  }
+
+  fallback() external payable {
+    fund();
+  }
+
+/// @notice Funds the contract based on the ETH/USD price
   function fund() public payable {
     require(
       msg.value.getConversionRate(priceFeed) >= MINIMUM_USD,
@@ -29,18 +50,6 @@ contract FundMe {
     );
     addressToAmountFunded[msg.sender] += msg.value;
     funders.push(msg.sender);
-  }
-
-  //   function getVersion() public view returns (uint256) {
-  //     AggregatorV3Interface priceFeed = AggregatorV3Interface(
-  //       0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
-  //     );
-  //     return priceFeed.version();
-  //   }
-
-  modifier onlyOwner() {
-    if (msg.sender != i_owner) revert NotOwner();
-    _;
   }
 
   function withdraw() public onlyOwner {
@@ -53,13 +62,5 @@ contract FundMe {
       value: address(this).balance
     }("");
     require(callSuccess, "Call failed");
-  }
-
-  fallback() external payable {
-    fund();
-  }
-
-  receive() external payable {
-    fund();
   }
 }
