@@ -5,7 +5,7 @@ const {
 const { network } = require("hardhat")
 const { verify } = require("../utils/verify")
 
-// { getNamedAccounts, deployments } are abstructed from the Hardhat Runtime Enviroment - hre
+// { getNamedAccounts, deployments } are abstructed from the Hardhat Runtime Enviroment - hre OR just require("hardhat") them from the hardhat
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy, log, get } = deployments
   const { deployer } = await getNamedAccounts()

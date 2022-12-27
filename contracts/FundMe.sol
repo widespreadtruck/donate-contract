@@ -22,7 +22,7 @@ contract FundMe {
   address public immutable i_owner;
   uint256 public constant MINIMUM_USD = 50 * 10 ** 18;
 
-  AggregatorV3Interface public priceFeed;
+  AggregatorV3Interface public  ;
 
   modifier onlyOwner() {
     if (msg.sender != i_owner) revert FundMe__NotOwner();
